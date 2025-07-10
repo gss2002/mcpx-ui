@@ -1,9 +1,14 @@
-# mcp-registry-frontend
+### English | [中文](README_ZH.md)
+
+
+# 👋 mcp-registry-frontend
 MCP Registry Frontend: A Vue 3 Application  This repository contains the frontend application for the MCP Registry project, built with Vue 3.
 
 Here's a refined `README.md` for your MCP Registry Frontend project:
 
-# MCP Registry Frontend
+<img width="1246" alt="17771741589061_ pic" src="images/01.png" />
+
+# 🚀 MCP Registry Frontend
 
 This repository houses the **frontend application** for the **MCP Registry project**, built with **Vue 3**. It serves as the user interface for the open-source [mcp-registry](https://github.com/modelcontextprotocol/registry) backend.
 
@@ -14,6 +19,9 @@ This repository houses the **frontend application** for the **MCP Registry proje
 The MCP Registry Frontend provides an intuitive and responsive interface for Browse, searching, and viewing details of registered servers within the Model Context Protocol ecosystem.
 
 -----
+<img width="1246" alt="17771741589061_ pic" src="images/02.png" />
+
+<img width="1246" alt="17771741589061_ pic" src="images/03.png" />
 
 ## Key Features
 
