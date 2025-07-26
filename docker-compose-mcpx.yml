@@ -9,6 +9,8 @@ services:
     depends_on:
       - mongodb
     environment:
+      - MCP_REGISTRY_DATABASE_TYPE=mongodb
+      - MCP_REGISTRY_SEED_IMPORT=false
       - MCP_REGISTRY_DATABASE_URL=${MCP_REGISTRY_DATABASE_URL:-mongodb://mongodb:27017}
       - MCP_REGISTRY_ENVIRONMENT=${MCP_REGISTRY_ENVIRONMENT:-test}
       - MCP_REGISTRY_GITHUB_CLIENT_ID=${MCP_REGISTRY_GITHUB_CLIENT_ID}
@@ -42,6 +44,21 @@ services:
       - 5173:5173
     environment:
       - NODE_ENV=production
+    networks:
+      - mcpx-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: mcpx-nginx
+    depends_on:
+      - mcpx-ui
+      - mcpx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - mcpx-network
     restart: unless-stopped
