@@ -11,7 +11,7 @@
           <h3>{{ formatServerName(server.name) }}</h3>
           <div class="server-meta">
             <el-tag size="small" type="info">{{ server.version_detail.version }}</el-tag>
-            <span v-if="server.version_detail.is_latest" class="latest-tag">最新</span>
+            <span v-if="server.version_detail.is_latest" class="latest-tag">Latest</span>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@ const props = defineProps({
 })
 
 const formatServerName = (name) => {
-  // 从完整名称中提取简短名称
+  // Extract short name from full name
   const parts = name.split('/')
   return parts[parts.length - 1] || name
 }
@@ -75,8 +75,8 @@ const getServerInitial = (name) => {
 }
 
 const getServerIcon = (server) => {
-  // 这里可以根据服务器信息生成图标URL
-  // 例如，可以使用GitHub头像API等
+  // Generate icon URL based on server information
+  // For example, can use GitHub avatar API
   if (server.repository && server.repository.source === 'github') {
     const repoName = getRepositoryName(server.repository)
     return `https://github.com/${repoName}.png`

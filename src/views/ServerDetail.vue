@@ -6,12 +6,12 @@
   <div v-else-if="error" class="error-container">
     <el-result
       icon="error"
-      title="加载失败"
+      title="Loading Failed"
       :sub-title="error"
     >
       <template #extra>
-        <el-button type="primary" @click="fetchServerData">重试</el-button>
-        <el-button @click="$router.push('/')">返回首页</el-button>
+        <el-button type="primary" @click="fetchServerData">Retry</el-button>
+        <el-button @click="$router.push('/')">Back to Home</el-button>
       </template>
     </el-result>
   </div>
@@ -29,8 +29,8 @@
           <h1>{{ formatServerName(server.name) }}</h1>
           <div class="server-meta">
             <el-tag size="small">{{ server.version_detail.version }}</el-tag>
-            <span v-if="server.version_detail.is_latest" class="latest-tag">最新版本</span>
-            <span class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
+            <span v-if="server.version_detail.is_latest" class="latest-tag">Latest Version</span>
+            <span class="release-date">Released {{ formatDate(server.version_detail.release_date) }}</span>
           </div>
           
           <div class="repository-link" v-if="server.repository">
@@ -48,9 +48,9 @@
       
       <div class="server-actions">
         <el-button-group>
-          <el-tooltip content="查看其他版本" placement="top">
+          <el-tooltip content="View other versions" placement="top">
             <el-dropdown v-if="hasMultipleVersions" trigger="click">
-              <el-button>版本 <el-icon class="el-icon--right"><arrow-down /></el-icon></el-button>
+              <el-button>Version <el-icon class="el-icon--right"><arrow-down /></el-icon></el-button>
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item v-for="version in versions" :key="version">
@@ -72,9 +72,9 @@
     
     <div class="server-details">
       <el-tabs>
-        <el-tab-pane label="安装信息">
+        <el-tab-pane label="Installation">
           <div class="installation-info">
-            <h3>安装包</h3>
+            <h3>Packages</h3>
             <div v-if="server.packages && server.packages.length > 0">
               <el-card v-for="pkg in server.packages" :key="pkg.name" class="package-card">
                 <div class="package-header">
@@ -83,23 +83,23 @@
                 </div>
                 
                 <div class="package-version">
-                  <strong>版本:</strong> {{ pkg.version }}
+                  <strong>Version:</strong> {{ pkg.version }}
                 </div>
                 
                 <div v-if="pkg.runtime_hint" class="package-runtime">
-                  <strong>运行时:</strong> {{ pkg.runtime_hint }}
+                  <strong>Runtime:</strong> {{ pkg.runtime_hint }}
                 </div>
                 
                 <div v-if="pkg.environment_variables && pkg.environment_variables.length > 0" class="package-env-vars">
-                  <h5>环境变量:</h5>
+                  <h5>Environment Variables:</h5>
                   <el-table :data="pkg.environment_variables" stripe style="width: 100%">
-                    <el-table-column prop="name" label="名称" width="180" />
-                    <el-table-column prop="description" label="描述" />
+                    <el-table-column prop="name" label="Name" width="180" />
+                    <el-table-column prop="description" label="Description" />
                   </el-table>
                 </div>
                 
                 <div v-if="getInstallCommand(pkg)" class="package-install">
-                  <h5>安装命令:</h5>
+                  <h5>Installation Command:</h5>
                   <el-input
                     type="textarea"
                     :rows="1"
@@ -115,13 +115,13 @@
                 </div>
               </el-card>
             </div>
-            <el-empty v-else description="没有安装包信息" />
+            <el-empty v-else description="No package information available" />
           </div>
         </el-tab-pane>
         
-        <el-tab-pane label="远程连接">
+        <el-tab-pane label="Remote Connections">
           <div class="remotes-info">
-            <h3>远程连接端点</h3>
+            <h3>Remote Endpoints</h3>
             <div v-if="server.remotes && server.remotes.length > 0">
               <el-card v-for="(remote, index) in server.remotes" :key="index" class="remote-card">
                 <div class="remote-header">
@@ -133,15 +133,15 @@
                 </div>
                 
                 <div v-if="remote.headers && remote.headers.length > 0" class="remote-headers">
-                  <h5>请求头:</h5>
+                  <h5>Headers:</h5>
                   <el-table :data="remote.headers" stripe style="width: 100%">
-                    <el-table-column prop="name" label="名称" width="180" />
-                    <el-table-column prop="description" label="描述" />
+                    <el-table-column prop="name" label="Name" width="180" />
+                    <el-table-column prop="description" label="Description" />
                   </el-table>
                 </div>
               </el-card>
             </div>
-            <el-empty v-else description="没有远程连接信息" />
+            <el-empty v-else description="No remote connection information available" />
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -151,11 +151,11 @@
   <div v-else class="not-found-container">
     <el-result
       icon="info"
-      title="未找到服务器"
-      sub-title="请检查服务器ID是否正确"
+      title="Server Not Found"
+      sub-title="Please check if the server ID is correct"
     >
       <template #extra>
-        <el-button type="primary" @click="$router.push('/')">返回首页</el-button>
+        <el-button type="primary" @click="$router.push('/')">Back to Home</el-button>
       </template>
     </el-result>
   </div>
@@ -176,7 +176,7 @@ const loading = computed(() => store.loading)
 const error = computed(() => store.error)
 const server = computed(() => store.currentServer)
 
-// 假设有多个版本，实际项目中可能需要从API获取
+// Assume multiple versions exist, may need to be fetched from API in actual project
 const versions = ref(['1.0.0', '0.9.0', '0.8.5'])
 const hasMultipleVersions = computed(() => versions.value.length > 1)
 
@@ -228,7 +228,7 @@ const formatDate = (dateString) => {
   
   try {
     const date = new Date(dateString)
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -261,13 +261,13 @@ const getInstallCommand = (pkg) => {
 const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text).then(() => {
     ElMessage({
-      message: '已复制到剪贴板',
+      message: 'Copied to clipboard',
       type: 'success',
       duration: 2000
     })
   }).catch(() => {
     ElMessage({
-      message: '复制失败',
+      message: 'Failed to copy',
       type: 'error',
       duration: 2000
     })
@@ -282,100 +282,3 @@ watch(() => route.params.id, (newId) => {
   }
 })
 </script>
-
-<style lang="scss" scoped>
-.loading-container,
-.error-container,
-.not-found-container {
-  padding: 2rem;
-}
-
-.server-detail-container {
-  padding: 1rem 0;
-}
-
-.server-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-}
-
-.server-title-section {
-  display: flex;
-  align-items: center;
-}
-
-.server-avatar {
-  margin-right: 1.5rem;
-}
-
-.server-title-info {
-  h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.8rem;
-  }
-}
-
-.server-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 0.75rem;
-  
-  .latest-tag {
-    color: #67c23a;
-    font-weight: 500;
-  }
-  
-  .release-date {
-    color: #909399;
-    font-size: 0.9rem;
-  }
-}
-
-.repository-link {
-  margin-top: 0.5rem;
-}
-
-.server-description {
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-.package-card,
-.remote-card {
-  margin-bottom: 1rem;
-}
-
-.package-header,
-.remote-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  
-  h4 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-}
-
-.package-version,
-.package-runtime,
-.remote-url {
-  margin-bottom: 0.75rem;
-}
-
-.package-env-vars,
-.package-install,
-.remote-headers {
-  margin-top: 1rem;
-  
-  h5 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-  }
-}
-</style>

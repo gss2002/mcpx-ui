@@ -1,8 +1,8 @@
 <template>
   <div class="search-container">
     <div class="search-header">
-      <h2>搜索结果: <span class="search-query">{{ query }}</span></h2>
-      <p v-if="totalResults !== null">找到 {{ totalResults }} 个结果</p>
+      <h2>Search Results: <span class="search-query">{{ query }}</span></h2>
+      <p v-if="totalResults !== null">Found {{ totalResults }} results</p>
     </div>
     
     <div v-if="loading" class="loading-container">
@@ -15,7 +15,7 @@
         type="error"
         show-icon
       />
-      <el-button class="retry-button" type="primary" @click="searchServers">重试</el-button>
+      <el-button class="retry-button" type="primary" @click="searchServers">Retry</el-button>
     </div>
     
     <div v-else-if="searchResults.length > 0" class="results-container">
@@ -45,8 +45,8 @@
     </div>
     
     <div v-else class="no-results-container">
-      <el-empty description="没有找到匹配的服务器" />
-      <el-button type="primary" @click="$router.push('/')">返回首页</el-button>
+      <el-empty description="No matching servers found" />
+      <el-button type="primary" @click="$router.push('/')">Back to Home</el-button>
     </div>
   </div>
 </template>

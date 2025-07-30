@@ -29,7 +29,7 @@ export const useServersStore = defineStore('servers', {
         this.nextPage = response.data.next
         return response.data
       } catch (error) {
-        this.error = error.message || '获取服务器列表失败'
+        this.error = error.message || 'Failed to fetch server list'
         console.error('Error fetching servers:', error)
         throw error
       } finally {
@@ -46,7 +46,7 @@ export const useServersStore = defineStore('servers', {
         this.currentServer = response.data
         return response.data
       } catch (error) {
-        this.error = error.message || '获取服务器详情失败'
+        this.error = error.message || 'Failed to fetch server details'
         console.error(`Error fetching server ${id}:`, error)
         throw error
       } finally {
@@ -62,7 +62,7 @@ export const useServersStore = defineStore('servers', {
         const response = await api.searchServers(query, limit, offset)
         return response.data
       } catch (error) {
-        this.error = error.message || '搜索服务器失败'
+        this.error = error.message || 'Failed to search servers'
         console.error('Error searching servers:', error)
         throw error
       } finally {
