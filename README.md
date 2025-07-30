@@ -1,4 +1,5 @@
 # 👋 mcp-registry-frontend
+
 MCP Registry Frontend: A Vue 3 Application. This repository contains the frontend application for the MCP Registry project, built with Vue 3.
 
 <img width="1246" alt="17771741589061_ pic" src="images/01.png" />
