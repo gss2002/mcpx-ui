@@ -1,3 +1,103 @@
+import { defineStore } from 'pinia'
+import api from '../services/api'
+
+export const useServersStore = defineStore('servers', {
+  state: () => ({
+    servers: [],
+    currentServer: null,
+    loading: false,
+    error: null,
+    nextCursor: null,
+    hasNextPage: false,
+    currentPageData: null
+  }),
+  
+  getters: {
+    getServerById: (state) => (id) => {
+      return state.servers.find(server => server.id === id) || null
+    }
+  },
+  
+  actions: {
+    async fetchServers(limit = 20, cursor = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Your API uses cursor-based pagination
+        const params = { limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params)
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch server list'
+        console.error('Error fetching servers:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    async fetchServerDetail(id, version = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await api.getServerDetail(id, version)
+        this.currentServer = response.data
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch server details'
+        console.error(`Error fetching server ${id}:`, error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    async searchServers(query, limit = 20, cursor = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Check if search also uses cursor-based pagination
+        const params = { search: query, limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params) // Use getServers instead of searchServers
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to search servers'
+        console.error('Error searching servers:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    clearCurrentServer() {
+      this.currentServer = null
+    }
+  }
+})
+[ec2-user@ip-10-195-218-187 mcpx-ui]$ cat src/views/Docs.vue
 <template>
   <div class="docs-container">
     <el-row :gutter="20">
@@ -20,12 +120,12 @@
             <h4>External Links</h4>
             <ul>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">
+                <a href="https://github.com/gss2002/mcpx-ui" target="_blank">
                   GitHub Repository
                 </a>
               </li>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">
+                <a href="https://github.com/gss2002/mcpx-ui/issues" target="_blank">
                   Issue Tracker
                 </a>
               </li>
@@ -162,11 +262,11 @@
                   <li>Improve documentation</li>
                   <li>Share and promote the project</li>
                 </ul>
-                <p>For detailed information, please refer to the <a href="https://github.com/LouisCan/mcp-registry-frontend/README.md" target="_blank">Contributing Guide</a>.</p>
+                <p>For detailed information, please refer to the <a href="https://github.com/gss2002/mcpx-ui/README.md" target="_blank">Contributing Guide</a>.</p>
               </el-collapse-item>
               
               <el-collapse-item title="How do I report issues?" name="3">
-                <p>If you find issues or have suggestions for improvements, please submit them on the <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">GitHub Issues</a> page.</p>
+                <p>If you find issues or have suggestions for improvements, please submit them on the <a href="https://github.com/mcpx-ui/issues" target="_blank">GitHub Issues</a> page.</p>
               </el-collapse-item>
             </el-collapse>
           </section>
