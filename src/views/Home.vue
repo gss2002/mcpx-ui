@@ -3,14 +3,14 @@
     <section class="hero-section">
       <div class="hero-content">
         <h1>MCP Registry</h1>
-        <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
+        <p>Supporting standardized integration, building intelligent application ecosystems with dynamic registration and smart integration - MCP Registry</p>
       </div>
     </section>
     
     <section class="servers-section">
       <div class="section-header">
-        <h2>热门 MCP Servers</h2>
-        <span>{{ totalCount }} 个服务器</span>
+        <h2>Popular MCP Servers</h2>
+        <span>{{ totalCount }} servers</span>
       </div>
       
       <el-row :gutter="20" v-loading="loading">
