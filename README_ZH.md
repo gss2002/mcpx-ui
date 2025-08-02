@@ -1,15 +1,13 @@
+# 👋 MCP Registry Frontend
 
-
-# 👋 MCP Registry 前端
-
-这个仓库是 **MCP Registry 项目**的**前端应用**，使用 **Vue 3** 构建。它是开源项目 [mcp-registry](https://github.com/modelcontextprotocol/registry) 后端的**用户界面**。
+This repository houses the **frontend application** for the **MCP Registry project**, built with **Vue 3**. It serves as the **user interface** for the open-source [mcp-registry](https://github.com/modelcontextprotocol/registry) backend.
 
 <img width="1246" alt="17771741589061_ pic" src="images/01.png" />
 -----
 
-## 项目概览
+## Project Overview
 
-MCP Registry 前端为浏览、搜索和查看 Model Context Protocol 生态系统中注册服务器的详细信息提供了一个直观且响应式的界面。
+The MCP Registry Frontend provides an intuitive and responsive interface for browsing, searching, and viewing detailed information of registered servers within the Model Context Protocol ecosystem.
 
 -----
 
@@ -17,72 +15,72 @@ MCP Registry 前端为浏览、搜索和查看 Model Context Protocol 生态系�
 
 <img width="1246" alt="17771741589061_ pic" src="images/03.png" />
 
-## 主要功能
+## Key Features
 
-* **服务器列表展示**：查看所有已注册服务器的完整列表。
-* **服务器详情页面**：通过专门的详情视图深入了解每个服务器的具体信息。
-* **搜索功能**：使用集成的搜索功能轻松查找服务器。
-* **文档页面**：直接在应用内访问相关文档。
-* **响应式设计**：在各种设备和屏幕尺寸上享受无缝体验。
+* **Server List Display**: View a comprehensive list of all registered servers.
+* **Server Detail Pages**: Dive into the specifics of each server with dedicated detail views.
+* **Search Functionality**: Easily find servers using the integrated search.
+* **Documentation Page**: Access relevant documentation directly within the application.
+* **Responsive Design**: Enjoy a seamless experience across various devices and screen sizes.
 
 -----
 
-## 项目结构
+## Project Structure
 
 ```
 frontend/
-├── public/               # 静态资源
+├── public/               # Static assets
 ├── src/
-│   ├── assets/           # 样式、图片及其他资源
-│   ├── components/       # 可复用 Vue 组件
-│   ├── router/           # Vue Router 路由配置
-│   ├── services/         # API 服务定义
-│   ├── stores/           # Pinia 状态管理模块
-│   ├── views/            # 页面级组件
-│   ├── App.vue           # 根 Vue 组件
-│   └── main.js           # 应用入口文件
-├── index.html            # 主要 HTML 入口文件
-├── package.json          # 项目依赖和脚本
-└── vite.config.js        # Vite 构建工具配置
+│   ├── assets/           # Styles, images, and other assets
+│   ├── components/       # Reusable Vue components
+│   ├── router/           # Vue Router configuration
+│   ├── services/         # API service definitions
+│   ├── stores/           # Pinia state management modules
+│   ├── views/            # Page-level components
+│   ├── App.vue           # Root Vue component
+│   └── main.js           # Application entry point
+├── index.html            # Main HTML entry file
+├── package.json          # Project dependencies and scripts
+└── vite.config.js        # Vite build tool configuration
 ```
 
 -----
 
-## 快速开始
+## Getting Started
 
-要让项目在本地运行起来，请按照以下步骤操作：
+To get the project up and running locally, follow these steps:
 
-### 安装
+### Installation
 
-克隆仓库并安装必要的依赖：
+Clone the repository and install the necessary dependencies:
 
 ```bash
 npm install
 ```
 
-### 开发服务器
+### Development Server
 
-启动开发服务器，支持热重载：
+Start the development server with hot-reloading:
 
 ```bash
 npm run dev
 ```
 
-应用程序通常会在 `http://localhost:5173` 上可用。
+The application will typically be available at `http://localhost:5173`.
 
-### 构建生产版本
+### Build for Production
 
-为生产部署编译和压缩应用程序：
+Compile and minify the application for production deployment:
 
 ```bash
 npm run build
 ```
 
-编译后的资产将放置在 `dist` 目录中。
+The compiled assets will be placed in the `dist` directory.
 
-### 预览生产构建
+### Preview Production Build
 
-在本地测试生产构建：
+To test the production build locally:
 
 ```bash
 npm run serve
@@ -90,23 +88,23 @@ npm run serve
 
 -----
 
-## 技术栈
+## Technology Stack
 
-* **Vue 3**：一个渐进式 JavaScript 框架，用于构建用户界面。
-* **Vue Router**：Vue.js 的官方路由库。
-* **Pinia**：Vue.js 的轻量级且直观的状态管理库。
-* **Element Plus**：一个流行的 Vue 3 UI 组件库，用于构建丰富的 Web 应用程序。
-* **Axios**：一个基于 Promise 的 HTTP 客户端，用于发出 API 请求。
-* **Vite**：下一代前端工具，提供极快的开发体验。
-
------
-
-## API 集成
-
-前端通过 `/api` 代理与后端 API 通信。在开发环境中，API 请求会自动代理到 `http://localhost:8080/v0`。
+* **Vue 3**: A progressive JavaScript framework for building user interfaces.
+* **Vue Router**: The official routing library for Vue.js.
+* **Pinia**: A lightweight and intuitive state management library for Vue.js.
+* **Element Plus**: A popular Vue 3 UI component library for building rich web applications.
+* **Axios**: A promise-based HTTP client for making API requests.
+* **Vite**: A next-generation frontend tooling that provides an extremely fast development experience.
 
 -----
 
-## 样式和主题
+## API Integration
 
-项目使用 **SCSS** 进行样式管理。您可以在 `src/assets/styles/main.scss` 文件中自定义应用程序的主题颜色和变量。
+The frontend communicates with the backend API via a `/api` proxy. In the development environment, API requests are automatically proxied to `http://localhost:8080/v0`.
+
+-----
+
+## Styling and Theming
+
+The project uses **SCSS** for styling. You can customize the application's theme colors and variables in the `src/assets/styles/main.scss` file.

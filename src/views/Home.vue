@@ -3,14 +3,14 @@
     <section class="hero-section">
       <div class="hero-content">
         <h1>MCP Registry</h1>
-        <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
+        <p>Supporting standardized integration, building intelligent application ecosystems with dynamic registration and smart integration - MCP Registry</p>
       </div>
     </section>
     
     <section class="servers-section">
       <div class="section-header">
-        <h2>热门 MCP Servers</h2>
-        <span>{{ totalCount }} 个服务器</span>
+        <h2>Popular MCP Servers</h2>
+        <span>{{ servers.length }} servers</span>
       </div>
       
       <el-row :gutter="20" v-loading="loading">
@@ -27,14 +27,32 @@
         </el-col>
       </el-row>
       
-      <div class="pagination-container" v-if="totalCount > 0">
-        <el-pagination
-          v-model:current-page="currentPage"
-          :page-size="pageSize"
-          :total="totalCount"
-          layout="prev, pager, next"
-          @current-change="handlePageChange"
-        />
+      <!-- Cursor-based pagination controls -->
+      <div class="pagination-container" v-if="servers.length > 0">
+        <el-button 
+          @click="goToPreviousPage" 
+          :disabled="!canGoPrevious || loading"
+          :icon="ArrowLeft"
+          size="large"
+        >
+          Previous
+        </el-button>
+        
+        <div class="page-info">
+          <span>Page {{ currentPageNumber }}</span>
+          <span v-if="servers.length > 0" class="server-count">
+            ({{ servers.length }} servers)
+          </span>
+        </div>
+        
+        <el-button 
+          @click="goToNextPage" 
+          :disabled="!hasNextPage || loading"
+          :icon="ArrowRight"
+          size="large"
+        >
+          Next
+        </el-button>
       </div>
     </section>
   </div>
@@ -42,31 +60,53 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { useServersStore } from '../stores/servers'
 import ServerCard from '../components/ServerCard.vue'
 
 const store = useServersStore()
 const loading = computed(() => store.loading)
 const servers = computed(() => store.servers)
-const totalCount = computed(() => store.totalCount)
+const hasNextPage = computed(() => store.hasNextPage)
 
-const currentPage = ref(1)
+const currentPageNumber = ref(1)
 const pageSize = ref(20)
+const cursors = ref([null]) // Track cursors: [null, cursor1, cursor2, ...]
 
-const fetchServers = async (page = 1) => {
-  const offset = (page - 1) * pageSize.value
-  await store.fetchServers(pageSize.value, offset)
+const canGoPrevious = computed(() => currentPageNumber.value > 1)
+
+const fetchServers = async (cursor = null) => {
+  await store.fetchServers(pageSize.value, cursor)
 }
 
-const handlePageChange = (page) => {
-  currentPage.value = page
-  fetchServers(page)
+const goToNextPage = async () => {
+  if (!hasNextPage.value || loading.value) return
+  
+  // Add next cursor to our tracking array
+  cursors.value.push(store.nextCursor)
+  currentPageNumber.value++
+  
+  await fetchServers(store.nextCursor)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const goToPreviousPage = async () => {
+  if (!canGoPrevious.value || loading.value) return
+  
+  // Remove current page cursor and go back
+  cursors.value.pop()
+  currentPageNumber.value--
+  
+  const previousCursor = cursors.value[cursors.value.length - 1]
+  await fetchServers(previousCursor)
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 onMounted(async () => {
   try {
-    await fetchServers()
+    currentPageNumber.value = 1
+    cursors.value = [null] // Reset cursor tracking
+    await fetchServers(null) // First page, no cursor
   } catch (error) {
     console.error('Failed to load servers:', error)
   }
@@ -121,5 +161,33 @@ onMounted(async () => {
   margin-top: 2rem;
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  
+  .page-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+    
+    .server-count {
+      font-size: 0.9rem;
+      color: #999;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    gap: 1rem;
+    
+    .page-info {
+      font-size: 0.9rem;
+    }
+    
+    .el-button {
+      padding: 8px 16px;
+    }
+  }
 }
 </style>

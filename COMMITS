@@ -1,0 +1,7 @@
+feat: Initialize MCP Registry frontend project
+
+Create project structure and basic configuration
+Implement server list, details, search and other functions
+Add routing configuration and global styles
+Integrate Element Plus component library
+Write README files in Chinese and English

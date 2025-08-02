@@ -7,8 +7,9 @@ export const useServersStore = defineStore('servers', {
     currentServer: null,
     loading: false,
     error: null,
-    totalCount: 0,
-    nextPage: null
+    nextCursor: null,
+    hasNextPage: false,
+    currentPageData: null
   }),
   
   getters: {
@@ -18,18 +19,27 @@ export const useServersStore = defineStore('servers', {
   },
   
   actions: {
-    async fetchServers(limit = 50, offset = 0) {
+    async fetchServers(limit = 20, cursor = null) {
       this.loading = true
       this.error = null
       
       try {
-        const response = await api.getServers({ limit, offset })
-        this.servers = response.data.servers
-        this.totalCount = response.data.total_count
-        this.nextPage = response.data.next
+        // Your API uses cursor-based pagination
+        const params = { limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params)
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
         return response.data
       } catch (error) {
-        this.error = error.message || '获取服务器列表失败'
+        this.error = error.message || 'Failed to fetch server list'
         console.error('Error fetching servers:', error)
         throw error
       } finally {
@@ -46,7 +56,7 @@ export const useServersStore = defineStore('servers', {
         this.currentServer = response.data
         return response.data
       } catch (error) {
-        this.error = error.message || '获取服务器详情失败'
+        this.error = error.message || 'Failed to fetch server details'
         console.error(`Error fetching server ${id}:`, error)
         throw error
       } finally {
@@ -54,15 +64,27 @@ export const useServersStore = defineStore('servers', {
       }
     },
     
-    async searchServers(query, limit = 50, offset = 0) {
+    async searchServers(query, limit = 20, cursor = null) {
       this.loading = true
       this.error = null
       
       try {
-        const response = await api.searchServers(query, limit, offset)
+        // Check if search also uses cursor-based pagination
+        const params = { search: query, limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params) // Use getServers instead of searchServers
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
         return response.data
       } catch (error) {
-        this.error = error.message || '搜索服务器失败'
+        this.error = error.message || 'Failed to search servers'
         console.error('Error searching servers:', error)
         throw error
       } finally {

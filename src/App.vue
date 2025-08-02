@@ -8,7 +8,7 @@
         <div class="search-container">
           <el-input
             v-model="searchQuery"
-            placeholder="搜索MCP服务..."
+            placeholder="Search MCP servers..."
             prefix-icon="el-icon-search"
             clearable
             @input="handleSearch"
@@ -19,8 +19,8 @@
           </el-input>
         </div>
         <nav class="main-nav">
-          <router-link to="/">首页</router-link>
-          <router-link to="/docs">文档</router-link>
+          <router-link to="/">Home</router-link>
+          <router-link to="/docs">Documentation</router-link>
           <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">GitHub</a>
         </nav>
       </div>
@@ -32,7 +32,7 @@
     
     <footer class="app-footer">
       <div class="footer-content">
-        <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
+        <p>Supporting standardized integration, building intelligent application ecosystems with dynamic registration and smart integration - MCP Registry</p>
         <p>&copy; {{ new Date().getFullYear() }} MCP Registry. MIT License.</p>
       </div>
     </footer>

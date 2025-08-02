@@ -1,32 +1,132 @@
+import { defineStore } from 'pinia'
+import api from '../services/api'
+
+export const useServersStore = defineStore('servers', {
+  state: () => ({
+    servers: [],
+    currentServer: null,
+    loading: false,
+    error: null,
+    nextCursor: null,
+    hasNextPage: false,
+    currentPageData: null
+  }),
+  
+  getters: {
+    getServerById: (state) => (id) => {
+      return state.servers.find(server => server.id === id) || null
+    }
+  },
+  
+  actions: {
+    async fetchServers(limit = 20, cursor = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Your API uses cursor-based pagination
+        const params = { limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params)
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch server list'
+        console.error('Error fetching servers:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    async fetchServerDetail(id, version = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await api.getServerDetail(id, version)
+        this.currentServer = response.data
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to fetch server details'
+        console.error(`Error fetching server ${id}:`, error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    async searchServers(query, limit = 20, cursor = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        // Check if search also uses cursor-based pagination
+        const params = { search: query, limit }
+        if (cursor) {
+          params.cursor = cursor
+        }
+        
+        const response = await api.getServers(params) // Use getServers instead of searchServers
+        
+        this.servers = response.data.servers || []
+        this.nextCursor = response.data.metadata?.next_cursor
+        this.hasNextPage = !!this.nextCursor
+        this.currentPageData = response.data.metadata
+        
+        return response.data
+      } catch (error) {
+        this.error = error.message || 'Failed to search servers'
+        console.error('Error searching servers:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    
+    clearCurrentServer() {
+      this.currentServer = null
+    }
+  }
+})
+[ec2-user@ip-10-195-218-187 mcpx-ui]$ cat src/views/Docs.vue
 <template>
   <div class="docs-container">
     <el-row :gutter="20">
       <el-col :span="6">
         <div class="docs-sidebar">
-          <h3>文档导航</h3>
+          <h3>Documentation Navigation</h3>
           <el-menu
             :default-active="activeSection"
             class="docs-menu"
             @select="scrollToSection"
           >
-            <el-menu-item index="overview">概述</el-menu-item>
-            <el-menu-item index="api">API 参考</el-menu-item>
-            <el-menu-item index="server-json">服务器 JSON 格式</el-menu-item>
-            <el-menu-item index="publishing">发布服务器</el-menu-item>
-            <el-menu-item index="faq">常见问题</el-menu-item>
+            <el-menu-item index="overview">Overview</el-menu-item>
+            <el-menu-item index="api">API Reference</el-menu-item>
+            <el-menu-item index="server-json">Server JSON Format</el-menu-item>
+            <el-menu-item index="publishing">Publishing Servers</el-menu-item>
+            <el-menu-item index="faq">FAQ</el-menu-item>
           </el-menu>
           
           <div class="external-links">
-            <h4>外部链接</h4>
+            <h4>External Links</h4>
             <ul>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">
-                  GitHub 仓库
+                <a href="https://github.com/gss2002/mcpx-ui" target="_blank">
+                  GitHub Repository
                 </a>
               </li>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">
-                  问题反馈
+                <a href="https://github.com/gss2002/mcpx-ui/issues" target="_blank">
+                  Issue Tracker
                 </a>
               </li>
             </ul>
@@ -37,39 +137,39 @@
       <el-col :span="18">
         <div class="docs-content">
           <section id="overview" class="docs-section">
-            <h2>概述</h2>
-            <p>MCP Registry 是一个社区驱动的 Model Context Protocol (MCP) 服务器注册表。它提供了一个集中式的存储库，用于发现和管理各种 MCP 实现及其相关的元数据、配置和功能。</p>
+            <h2>Overview</h2>
+            <p>MCP Registry is a community-driven registry for Model Context Protocol (MCP) servers. It provides a centralized repository for discovering and managing various MCP implementations and their associated metadata, configuration, and capabilities.</p>
             
-            <h3>主要功能</h3>
+            <h3>Key Features</h3>
             <ul>
-              <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
-              <li>服务监控的健康检查端点</li>
-              <li>支持各种环境配置</li>
-              <li>优雅的关闭处理</li>
-              <li>MongoDB 和内存数据库支持</li>
-              <li>全面的 API 文档</li>
-              <li>列出注册表条目的分页支持</li>
+              <li>RESTful API for managing MCP registry entries (list, get, create, update, delete)</li>
+              <li>Health check endpoints for service monitoring</li>
+              <li>Support for various environment configurations</li>
+              <li>Graceful shutdown handling</li>
+              <li>MongoDB and in-memory database support</li>
+              <li>Comprehensive API documentation</li>
+              <li>Pagination support for listing registry entries</li>
             </ul>
           </section>
           
           <section id="api" class="docs-section">
-            <h2>API 参考</h2>
-            <p>MCP Registry 提供了一个 RESTful API，用于与注册表进行交互。以下是主要的 API 端点：</p>
+            <h2>API Reference</h2>
+            <p>MCP Registry provides a RESTful API for interacting with the registry. The following are the main API endpoints:</p>
             
-            <h3>获取服务器列表</h3>
+            <h3>Get Server List</h3>
             <el-card class="api-card">
               <div class="api-method">GET</div>
               <div class="api-path">/v0/servers</div>
-              <p>返回所有注册的 MCP 服务器列表。</p>
+              <p>Returns a list of all registered MCP servers.</p>
               
-              <h4>参数</h4>
+              <h4>Parameters</h4>
               <el-table :data="listServersParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
+                <el-table-column prop="name" label="Name" width="120" />
+                <el-table-column prop="type" label="Type" width="120" />
+                <el-table-column prop="description" label="Description" />
               </el-table>
               
-              <h4>响应示例</h4>
+              <h4>Response Example</h4>
               <pre><code>{
   "servers": [
     {
@@ -92,27 +192,27 @@
 }</code></pre>
             </el-card>
             
-            <h3>获取服务器详情</h3>
+            <h3>Get Server Details</h3>
             <el-card class="api-card">
               <div class="api-method">GET</div>
               <div class="api-path">/v0/servers/{id}</div>
-              <p>返回特定 MCP 服务器的详细信息。</p>
+              <p>Returns detailed information for a specific MCP server.</p>
               
-              <h4>参数</h4>
+              <h4>Parameters</h4>
               <el-table :data="getServerParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
+                <el-table-column prop="name" label="Name" width="120" />
+                <el-table-column prop="type" label="Type" width="120" />
+                <el-table-column prop="description" label="Description" />
               </el-table>
             </el-card>
           </section>
           
           <section id="server-json" class="docs-section">
-            <h2>服务器 JSON 格式</h2>
-            <p>MCP 服务器在注册表中使用标准化的 JSON 格式进行表示。以下是主要的数据结构：</p>
+            <h2>Server JSON Format</h2>
+            <p>MCP servers are represented using a standardized JSON format in the registry. The following are the main data structures:</p>
             
             <h3>Server</h3>
-            <p>表示基本的服务器信息。</p>
+            <p>Represents basic server information.</p>
             <pre><code>{
   "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
   "name": "@modelcontextprotocol/servers/src/filesystem",
@@ -130,43 +230,43 @@
 }</code></pre>
             
             <h3>ServerDetail</h3>
-            <p>包含服务器的详细信息，包括包和远程连接端点。</p>
+            <p>Contains detailed server information, including packages and remote connection endpoints.</p>
           </section>
           
           <section id="publishing" class="docs-section">
-            <h2>发布服务器</h2>
-            <p>要将 MCP 服务器发布到注册表，您需要准备一个符合规范的服务器 JSON 文件，并使用 API 提交。</p>
+            <h2>Publishing Servers</h2>
+            <p>To publish an MCP server to the registry, you need to prepare a compliant server JSON file and submit it using the API.</p>
             
-            <h3>发布步骤</h3>
+            <h3>Publishing Steps</h3>
             <ol>
-              <li>准备服务器 JSON 文件</li>
-              <li>验证 JSON 格式是否符合规范</li>
-              <li>使用 API 提交服务器信息</li>
-              <li>验证服务器是否已成功发布</li>
+              <li>Prepare the server JSON file</li>
+              <li>Validate that the JSON format complies with the specification</li>
+              <li>Submit the server information using the API</li>
+              <li>Verify that the server has been successfully published</li>
             </ol>
           </section>
           
           <section id="faq" class="docs-section">
-            <h2>常见问题</h2>
+            <h2>Frequently Asked Questions</h2>
             
             <el-collapse>
-              <el-collapse-item title="什么是 MCP？" name="1">
-                <p>Model Context Protocol (MCP) 是一种标准化协议，用于在模型和上下文之间进行通信。它允许模型访问外部工具、数据和服务，从而增强其功能。</p>
+              <el-collapse-item title="What is MCP?" name="1">
+                <p>Model Context Protocol (MCP) is a standardized protocol for communication between models and contexts. It allows models to access external tools, data, and services, thereby enhancing their capabilities.</p>
               </el-collapse-item>
               
-              <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="2">
-                <p>您可以通过以下方式贡献：</p>
+              <el-collapse-item title="How can I contribute to the MCP Registry project?" name="2">
+                <p>You can contribute in the following ways:</p>
                 <ul>
-                  <li>提交问题和功能请求</li>
-                  <li>提交代码改进的拉取请求</li>
-                  <li>改进文档</li>
-                  <li>分享和推广项目</li>
+                  <li>Submit issues and feature requests</li>
+                  <li>Submit pull requests with code improvements</li>
+                  <li>Improve documentation</li>
+                  <li>Share and promote the project</li>
                 </ul>
-                <p>详细信息请参阅 <a href="https://github.com/LouisCan/mcp-registry-frontend/README.md" target="_blank">贡献指南</a>。</p>
+                <p>For detailed information, please refer to the <a href="https://github.com/gss2002/mcpx-ui/README.md" target="_blank">Contributing Guide</a>.</p>
               </el-collapse-item>
               
-              <el-collapse-item title="如何报告问题？" name="3">
-                <p>如果您发现了问题或有改进建议，请在 <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">GitHub Issues</a> 页面提交问题。</p>
+              <el-collapse-item title="How do I report issues?" name="3">
+                <p>If you find issues or have suggestions for improvements, please submit them on the <a href="https://github.com/mcpx-ui/issues" target="_blank">GitHub Issues</a> page.</p>
               </el-collapse-item>
             </el-collapse>
           </section>
@@ -185,26 +285,26 @@ const sections = ['overview', 'api', 'server-json', 'publishing', 'faq']
 const listServersParams = [
   {
     name: 'limit',
-    type: '整数',
-    description: '每页结果数量（最大 5000）'
+    type: 'Integer',
+    description: 'Number of results per page (maximum 5000)'
   },
   {
     name: 'offset',
-    type: '整数',
-    description: '用于分页的跳过结果数量'
+    type: 'Integer',
+    description: 'Number of results to skip for pagination'
   }
 ]
 
 const getServerParams = [
   {
     name: 'id',
-    type: '字符串',
-    description: '服务器的唯一 ID'
+    type: 'String',
+    description: 'Unique ID of the server'
   },
   {
     name: 'version',
-    type: '字符串',
-    description: '所需的 MCP 服务器版本（可选）'
+    type: 'String',
+    description: 'Desired MCP server version (optional)'
   }
 ]
 
