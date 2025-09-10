@@ -16,13 +16,13 @@
     "axios": "^1.11.0",
     "pinia": "^3.0.3",
     "@vueuse/core": "^13.6.0",
-    "element-plus": "^2.10.4"
+    "element-plus": "^2.11.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
     "eslint": "^9.32.0",
     "eslint-plugin-vue": "^10.4.0",
     "sass": "^1.66.1",
-    "vite": "^7.0.6"
+    "vite": "^7.1.5"
   }
 }
